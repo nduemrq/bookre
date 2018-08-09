@@ -114,8 +114,13 @@ def book(book_id):
     # query db for display book details
     bookDetails = db.execute("SELECT * FROM book WHERE id = :book_id", {"book_id": book_id}).fetchone()
     
-    # request for external api
-    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "bLUyK5Gd4FyCGGUP24pLJA", "isbns": bookDetails[1]}).json()
+    # request for external API
+    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "bLUyK5Gd4FyCGGUP24pLJA", "isbns": bookDetails[1]})
+    
+    if res.status_code != 200:
+        raise Exception('ERROR: API request unsuccessful')
+        
+    data = res.json()
     
     # query db for display all review
     reviewAll = db.execute("SELECT review, score, name FROM review JOIN member ON member.id = review.id_member WHERE id_book = :book_id", {"book_id": book_id}).fetchall()
@@ -130,4 +135,4 @@ def book(book_id):
         
         return redirect(url_for('book', book_id=book_id))
     
-    return render_template("index.html", book_id = book_id, sessionReview = sessionReview, bookDetails = bookDetails, res = res, reviewAll = reviewAll, user_id = session["user_id"])
+    return render_template("index.html", book_id = book_id, sessionReview = sessionReview, bookDetails = bookDetails, res = data, reviewAll = reviewAll, user_id = session["user_id"])
