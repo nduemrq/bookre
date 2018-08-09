@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+{% block body %}
+{% if user_id %}
+<div class="row justify-content-start align-items-end">
+    <div class="col">
+       
+    </div>
+</div>
+   
+    {% if searchMessage %}
+    <h3>{{ searchMessage }}</h3>
+    {% elif search %}
+    <div class="row justify-content-start align-items-end">
+        <div class="col">
+           <h4>Find {{ findNumber }} result for "{{ search }}"</h4>
+           <ul class="list-group">
+           {% for result in find %}
+             <li class="list-group-item"><a href="book/{{ result[0] }}">"{{ result[2] }}" - {{ result[3] }}, {{ result[4] }} </a></li>
+            {% endfor %}
+           </ul>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if bookDetails %}
+    <div class="row">
+        <div class="col">
+            <h3>{{ bookDetails[2]}}</h3>
+           <p></p>
+            <p><small class="text-muted">AUTHOR:</small> {{ bookDetails[3] }},
+            <small class="text-muted">YEAR:</small> {{ bookDetails[4] }}</p>
+            <p><small class="text-muted">ISBN:</small> {{ bookDetails[1] }}</p>
+            
+            <p><small class="text-muted">RATING ON GOODREADS:</small> {{ res['books'][0]['average_rating'] }} / {{ res['books'][0]['work_ratings_count'] }}</p>
+        </div>
+
+        {% if sessionReview == None %}
+        <div class="col">
+            <form action="{{ url_for('book', book_id = book_id) }}" method="POST">
+                <fieldset>
+                   <legend>Your review</legend>
+                    <div class="form-group">
+                        <label for="rating">Rate: </label>
+                        <div class="form-check form-check-inline"><input type="radio" class="form-check-input" id="value1" name="rate" value="1" checked><label for="value1" class="form-check-label">1</label></div>
+                        <div class="form-check form-check-inline"><input type="radio" class="form-check-input" id="value2" name="rate" value="2"><label for="value2" class="form-check-label">2</label></div>
+                        <div class="form-check form-check-inline"><input type="radio" class="form-check-input" id="value3" name="rate" value="3"><label for="value3" class="form-check-label">3</label></div>
+                        <div class="form-check form-check-inline"><input type="radio" class="form-check-input" id="value4" name="rate" value="4"><label for="value4" class="form-check-label">4</label></div>
+                        <div class="form-check form-check-inline"><input type="radio" class="form-check-input" id="value5" name="rate" value="5"><label for="value5" class="form-check-label">5</label></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="review">Opinion: </label>
+                        <textarea class="form-control" name="review" id="review" rows="7"></textarea>
+                    </div>                    
+                <div class="form-group">
+                    <button class="btn btn-outline-primary" type="submit">Submit</button>
+                </div>
+                </fieldset>
+            </form>
+        </div>
+        {% endif %}
+        {% if reviewAll %}
+        <div class="row align-self-start align-items-end">
+        <div class="col">
+         {% for review in reviewAll %}
+        <div class="card border-secondary mb-3">
+            <div class="card-header"><small class="text-muted">RATING: </small><span class="badge badge-primary">{{ review[1] }}</span></div>
+            <div class="card-body text-dark">
+                <h5 class="card-title">{{ review[2] }}</h5>
+                <p class="card-text">{{ review[0] }}</p>
+            </div>
+        </div>
+         {% endfor %}
+        </div>
+        {% endif %}
+
+    {% endif %}
+{% endif %}
+{% endblock %}
